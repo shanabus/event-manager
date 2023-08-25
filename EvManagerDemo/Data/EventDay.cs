@@ -2,7 +2,12 @@
 {
     public class EventDay
     {
-        public required Event Event { get; set; }
+        public EventDay()
+        {
+            TimeSlots = new List<TimeSlot>();
+        }
+
+        public Event? Event { get; set; }
 
         public int EventDayId { get; set; }
 
@@ -10,7 +15,7 @@
 
         public string? Room { get; set; }
 
-        public List<TimeSlot>? Agenda { get; set; }
+        public List<TimeSlot> TimeSlots { get; set; }
 
         public string? Note { get; set; }
     }

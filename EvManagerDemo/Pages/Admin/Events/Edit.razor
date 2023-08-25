@@ -1,0 +1,109 @@
+﻿@page "/admin/events/edit/{eventid:int}"
+@using EvManagerDemo.Data;
+@using EvManagerDemo.Services;
+@inject ILogger<Create> Logger
+@inject EventsService EventService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create Event</PageTitle>
+
+<h3>Edit Event</h3>
+
+@if(Model == null)
+{
+    <Loading></Loading>
+}
+else
+{
+    <EditForm Model="@Model" OnValidSubmit="@Submit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label for="Name" class="form-label">Name</label>
+            <InputText @bind-Value="Model!.Name" class="form-control" id="Name" />
+            <div class="form-text">Enter the <i>Name</i> of the Event.</div>
+        </div>
+        <div class="mb-3">
+            <label for="Location" class="form-label">Location</label>
+            <InputText @bind-Value="Model!.Location" class="form-control" id="Location" />
+            <div class="form-text">Enter the <i>Location</i> of the Event.</div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <h4>Event Dates</h4>
+            </div>
+            <div class="col text-end">
+                <button type="button" @onclick="AddDay" class="btn btn-sm btn-secondary"><span class="oi oi-plus"></span> Add Day</button>
+            </div>
+        </div>
+
+        @foreach (var d in Model.EventDays)
+        {
+            <div class="mb-3">
+                <div class="row">
+                    <div class="col">
+                        <label for="" class="form-label">Day</label>
+                        <InputDate @bind-Value="d!.Day" class="form-control" />
+                    </div>
+                    <div class="col">
+                        <label for="" class="form-label">Room</label>
+                        <InputText @bind-Value="d!.Room" class="form-control" />
+                    </div>
+                    <div class="col">
+                        <label for="" class="form-label">Note</label>
+                        <InputText @bind-Value="d!.Note" class="form-control" />
+                    </div>
+                    <div class="col-1 position-relative">
+                        <button type="button" class="btn btn-danger position-absolute bottom-0 end-0" @onclick="() => Remove(d)">Remove</button>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </EditForm>
+}
+
+
+
+@code {
+    [Parameter]
+    public int EventId { get; set; }
+    
+    public Event? Model { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Model = await EventService.GetEventAsync(EventId);
+    }
+
+    private void AddDay()
+    {
+        var today = DateTime.Now;
+
+        if (Model!.EventDays.Count > 0)
+        {
+            var last = Model!.EventDays.Last().Day.AddDays(1);
+            Model!.EventDays.Add(new EventDay { Day = last });
+        }
+        else
+        {
+            Model!.EventDays.Add(new EventDay { Day = today });    
+        }
+
+    }
+
+    private void Remove(EventDay day)
+    {
+        Model!.EventDays.Remove(day);
+    }
+
+    private async Task Submit()
+    {
+        var e = await EventService.UpdateEventAsync(Model!);
+
+        NavigationManager.NavigateTo($"/admin/events/details/{e.EventId}");
+    }
+}

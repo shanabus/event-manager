@@ -9,14 +9,14 @@
     <div class="col">
         <h1>Events List</h1>
     </div>
-    <div class="col">
-        <a href="/admin/events/create" class="btn btn-success">Create</a>
+    <div class="col text-end">
+        <a href="/admin/events/create" class="btn btn-success"><span class="oi oi-calendar" aria-hidden="true"></span> Create</a>
     </div>
 </div>
 
 @if (allEvents == null)
 {
-    <p><em>Loading...</em></p>
+    <Loading></Loading>
 }
 else
 {
@@ -26,15 +26,17 @@ else
                 <th>Name</th>
                 <th>Location</th>
                 <th>Dates</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var forecast in allEvents)
+            @foreach (var e in allEvents)
             {
                 <tr>
-                    <td>@forecast.Name</td>
-                    <td>@forecast.Location</td>
-                    <td>@forecast.EventDates?.Count()</td>
+                    <td><a href="/admin/events/details/@e.EventId">@e.Name</a></td>
+                    <td>@e.Location</td>
+                    <td>@e.EventDays?.Count()</td>
+                    <td class="text-end"><a href="/admin/events/edit/@e.EventId" class="btn btn-sm btn-warning"><span class="oi oi-pencil"></span></a></td>
                 </tr>
             }
         </tbody>

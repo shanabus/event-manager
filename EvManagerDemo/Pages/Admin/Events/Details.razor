@@ -1,0 +1,77 @@
+﻿@page "/admin/events/details/{eventid:int}"
+@using EvManagerDemo.Data;
+@using EvManagerDemo.Services;
+@inject ILogger<Create> Logger
+@inject EventsService EventService
+@inject NavigationManager NavigationManager
+
+@if (Model == null)
+{
+    <Loading></Loading>
+}
+else
+{
+    <h3>@Model.Name</h3>
+    <h6>@Model.Location</h6>
+    
+    @if(Model.EventDays.Any())
+    {
+        <div class="row mt-3">
+            <div class="col">
+                <h4>Event Dates</h4>
+            </div>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    <th>Room</th>
+                    <th>Notes</th>
+                    <th>Agenda</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var d in Model.EventDays)
+                {
+                    <tr>
+                        <td>@d.Day.ToShortDateString()</td>
+                        <td>@d.Room</td>
+                        <td>@d.Note</td>
+                        <td><a href="/admin/events/editagenda/@Model.EventId/@d.EventDayId">view</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        
+    }
+    
+    <div class="row mt-3">
+        <div class="col">
+            <button type="button" class="btn btn-danger" @onclick="Delete"><span class="oi oi-trash"></span> Delete</button>
+        </div>
+        <div class="col text-end">
+            <a class="btn btn-warning" href="/admin/events/edit/@Model.EventId">Edit</a>
+        </div>
+
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int EventId { get; set; }
+
+    public Event? Model { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Model = await EventService.GetEventAsync(EventId);
+    }
+
+    public async Task Delete()
+    {
+        await EventService.DeleteEventAsync(Model!);
+
+        NavigationManager.NavigateTo("/allevents");
+    }
+}

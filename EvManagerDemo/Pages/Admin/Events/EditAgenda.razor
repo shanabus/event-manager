@@ -1,0 +1,63 @@
+﻿@page "/admin/events/editagenda/{eventid:int}/{eventdayid:int}"
+@using EvManagerDemo.Data;
+@using EvManagerDemo.Services;
+@inject EventsService EventService
+@inject NavigationManager NavigationManager
+
+@if (Model == null)
+{
+    <Loading></Loading>
+}
+else
+{
+    <h3>@Model.Name &rsaquo; @Day.Day.ToShortDateString()</h3>
+    <h6>@Model.Location</h6>
+
+    <div class="row mt-3">
+        <div class="col">
+            <h4>Agenda</h4>
+        </div>
+        <div class="col">
+            <button type="button"><span class="oi oi-plus"></span> Add Slot</button>
+        </div>
+    </div>
+
+    @foreach(var ts in Day!.TimeSlots)
+    {
+        <div class="row">
+            <div class="col">
+                Start Time
+            </div>
+            <div class="col">
+                End Time
+            </div>
+            <div class="col">
+                Description
+            </div>
+        </div>
+    }
+}
+
+@code {
+    [Parameter]
+    public int EventId { get; set; }
+
+    [Parameter]
+    public int EventDayId { get; set; }
+
+    public Event? Model { get; set; }
+
+    public EventDay Day => Model!.EventDays!.First(x => x.EventDayId == EventDayId);
+
+    protected override async Task OnInitializedAsync()
+    {
+        Model = await EventService.GetEventAsync(EventId);
+    }
+
+    public async Task Delete()
+    {
+        await EventService.DeleteEventAsync(Model!);
+
+        NavigationManager.NavigateTo("/allevents");
+    }
+}
