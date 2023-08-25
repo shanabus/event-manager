@@ -1,0 +1,51 @@
+﻿@page "/allevents"
+@using EvManagerDemo.Data;
+@using EvManagerDemo.Services;
+@inject EventsService EventService
+
+<PageTitle>Events</PageTitle>
+
+<div class="row">
+    <div class="col">
+        <h1>Events List</h1>
+    </div>
+    <div class="col">
+        <a href="/admin/events/create" class="btn btn-success">Create</a>
+    </div>
+</div>
+
+@if (allEvents == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Dates</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in allEvents)
+            {
+                <tr>
+                    <td>@forecast.Name</td>
+                    <td>@forecast.Location</td>
+                    <td>@forecast.EventDates?.Count()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Event>? allEvents;
+
+    protected override async Task OnInitializedAsync()
+    {
+        allEvents = await EventService.GetEventsAsync();
+    }
+}
