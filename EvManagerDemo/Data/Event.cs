@@ -1,7 +1,9 @@
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace EvManagerDemo.Data
 {
+    [EntityTypeConfiguration(typeof(EventConfiguration))]
     public class Event
     {
         public Event()
@@ -11,7 +13,7 @@ namespace EvManagerDemo.Data
 
         public int EventId {  get; set; }
 
-        public List<EventDay> EventDays { get; set; }
+        public ICollection<EventDay> EventDays { get; set; }
 
         [Required]
         public string? Name { get; set;  }

@@ -4,7 +4,7 @@
     {
         public int TimeSlotId { get; set; }
 
-        public required EventDay Day { get; set; }
+        public EventDay? Day { get; set; }
 
         public DateTime StartTime { get; set; }
 

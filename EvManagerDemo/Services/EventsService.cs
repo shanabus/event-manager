@@ -14,12 +14,14 @@ namespace EvManagerDemo.Services
 
         public async Task<List<Event>> GetEventsAsync()
         {
-            return await _context.Events.ToListAsync();
+            return await _context.Events.Include(x => x.EventDays).ToListAsync();
         }
 
         public async Task<Event?> GetEventAsync(int id)
         {
-            return await _context.Events.Where(x => x.EventId == id).FirstOrDefaultAsync(x => x.EventId == id);
+            var result =  await _context.Events.Where(x => x.EventId == id).Include(x => x.EventDays).FirstOrDefaultAsync(x => x.EventId == id);
+
+            return result;
         }
 
         public async Task DeleteEventAsync(Event e)
