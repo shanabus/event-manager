@@ -13,29 +13,70 @@ else
     <h3>@Model.Name &rsaquo; @Day.Day.ToShortDateString()</h3>
     <h6>@Model.Location</h6>
 
-    <div class="row mt-3">
-        <div class="col">
-            <h4>Agenda</h4>
+    <EditForm Model="@Day" OnValidSubmit="@Submit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="row mt-3">
+            <div class="col">
+                <h4>Agenda</h4>
+            </div>
+            <div class="col text-end">
+                <button type="button" class="btn btn-primary" @onclick="() => AddTimeSlot(15)">Add 15</button>
+                <button type="button" class="btn btn-primary" @onclick="() => AddTimeSlot(30)">Add 30</button>
+                <button type="button" class="btn btn-primary" @onclick="() => AddTimeSlot(60)">Add 60</button>
+            </div>
         </div>
-        <div class="col">
-            <button type="button"><span class="oi oi-plus"></span> Add Slot</button>
-        </div>
-    </div>
+
+        <div class="container-sm">
+            <div class="row">
+                <div class="col-2 text-end">
+                    Start Time
+                </div>
+                <div class="col-1 text-center">
+                </div>
+                <div class="col-2">
+                    End Time
+                </div>
+                <div class="col-6">
+                    Description
+                </div>
+                <div class="col-1"></div>
+            </div>
 
     @foreach(var ts in Day!.TimeSlots)
     {
-        <div class="row">
-            <div class="col">
-                Start Time
+        <div class="row mb-1">
+            <div class="col-2 text-end">
+                <InputDate Type="InputDateType.Time" @bind-Value="ts!.StartTime" class="form-control text-end" />
             </div>
-            <div class="col">
-                End Time
+            <div class="col-1 text-center">
+                <span class="oi oi-minus"></span>
             </div>
-            <div class="col">
-                Description
+            <div class="col-2">
+                <InputDate Type="InputDateType.Time" @bind-Value="ts!.EndTime" class="form-control" />
+            </div>
+            <div class="col-6">
+                <InputText @bind-Value="ts!.Description" class="form-control" />
+            </div>
+            <div class="col-1">
+                <button type="button" class="btn btn-danger" @onclick="() => RemoveSlot(ts!)"><span class="oi oi-trash"></span></button>
             </div>
         </div>
     }
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <a href="/admin/events/details/@Model.EventId" class="btn btn-secondary">Cancel</a>
+            </div>
+            <div class="col text-end">
+                <button type="submit" class="btn btn-success">Save</button>
+            </div>
+        </div>
+        
+    </EditForm>
+    
 }
 
 @code {
@@ -54,10 +95,29 @@ else
         Model = await EventService.GetEventAsync(EventId);
     }
 
-    public async Task Delete()
+    public async Task AddTimeSlot(int duration)
     {
-        await EventService.DeleteEventAsync(Model!);
+        var nextStartTime = new DateTime(Day.Day.Year, Day.Day.Month, Day.Day.Day, 8, 0, 0);
 
-        NavigationManager.NavigateTo("/allevents");
+        if (Day.TimeSlots.Any())
+        {
+            nextStartTime = Day.TimeSlots.Max(x => x.EndTime);
+        }
+
+        var nextEndTime = nextStartTime.AddMinutes(duration);
+
+        Day.TimeSlots.Add(new TimeSlot { StartTime = nextStartTime, EndTime = nextEndTime });
+    }
+
+    public void RemoveSlot(TimeSlot ts)
+    {
+        Day.TimeSlots.Remove(ts);
+    }
+
+    private async Task Submit()
+    {
+        var e = await EventService.UpdateEventDayAsync(Day!);
+
+        NavigationManager.NavigateTo($"/admin/events/details/{e.Event.EventId}");
     }
 }

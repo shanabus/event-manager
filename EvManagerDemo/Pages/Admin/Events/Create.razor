@@ -29,7 +29,7 @@
             <h4>Event Dates</h4>
         </div>
         <div class="col text-end">
-            <button type="button" @onclick="AddDay" class="btn btn-sm btn-secondary"><span class="oi oi-plus"></span> Add Day</button>
+            <button type="button" @onclick="AddDay" class="btn btn-sm btn-primary"><span class="oi oi-plus"></span> Add Day</button>
         </div>
     </div>    
 
@@ -50,19 +50,31 @@
                     <InputText @bind-Value="d!.Note" class="form-control" />
                 </div>
                 <div class="col-1 position-relative">
-                    <button type="button" class="btn btn-danger position-absolute bottom-0 end-0" @onclick="() => Remove(d)">Remove</button>
+                    <button type="button" class="btn btn-danger position-absolute bottom-0 end-0" @onclick="() => Remove(d)"><span class="oi oi-trash"></span></button>
                 </div>
             </div>            
         </div>
     }
 
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <hr />
+
+    <div class="row mt-3">
+        <div class="col">
+            <a href="/allevents" class="btn btn-secondary">Cancel</a>
+        </div>
+        <div class="col text-end">
+            <button disabled="@(!IsValid)" type="submit" class="btn btn-success">Submit</button>
+        </div>
+    </div>
+    
 </EditForm>
 
 
 
 @code {
     public Event? Model { get; set; }
+
+    public bool IsValid = false;
 
     protected override void OnInitialized() => Model ??= new();
 
@@ -79,12 +91,16 @@
         {
             Model!.EventDays.Add(new EventDay { Day = today });    
         }
-
+        
+        IsValid = true;
     }
 
     private void Remove(EventDay day)
     {
         Model!.EventDays.Remove(day);
+
+
+        IsValid = Model!.EventDays.Count > 0;
     }
 
     private async Task Submit()

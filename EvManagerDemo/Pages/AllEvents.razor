@@ -10,6 +10,7 @@
         <h1>Events List</h1>
     </div>
     <div class="col text-end">
+        <a href="#" class="btn btn-secondary me-2"><span class="oi oi-data-transfer-download"></span> Export</a>
         <a href="/admin/events/create" class="btn btn-success"><span class="oi oi-calendar" aria-hidden="true"></span> Create</a>
     </div>
 </div>
@@ -35,7 +36,11 @@ else
                 <tr>
                     <td><a href="/admin/events/details/@e.EventId">@e.Name</a></td>
                     <td>@e.Location</td>
-                    <td>@e.EventDays?.Count()</td>
+                    <td>
+                        @e.EventDays.Min(x => x.Day).ToShortDateString()
+                        <span> - </span>
+                        @e.EventDays.Max(x => x.Day).ToShortDateString()
+                    </td>
                     <td class="text-end"><a href="/admin/events/edit/@e.EventId" class="btn btn-sm btn-warning"><span class="oi oi-pencil"></span></a></td>
                 </tr>
             }

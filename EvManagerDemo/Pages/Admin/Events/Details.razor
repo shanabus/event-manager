@@ -11,8 +11,15 @@
 }
 else
 {
-    <h3>@Model.Name</h3>
-    <h6>@Model.Location</h6>
+    <div class="row">
+        <div class="col">
+            <h3>@Model.Name</h3>
+            <h6>@Model.Location</h6>
+        </div>
+        <div class="col text-end">
+            <a href="/admin/events/registrants" class="btn btn-lg btn-secondary">12 Registrants</a>
+        </div>
+    </div>    
     
     @if(Model.EventDays.Any())
     {
@@ -29,6 +36,7 @@ else
                     <th>Room</th>
                     <th>Notes</th>
                     <th>Agenda</th>
+                    <th><span class="oi oi-clock"></span></th>
                 </tr>
             </thead>
             <tbody>
@@ -38,7 +46,21 @@ else
                         <td>@d.Day.ToShortDateString()</td>
                         <td>@d.Room</td>
                         <td>@d.Note</td>
-                        <td><a href="/admin/events/editagenda/@Model.EventId/@d.EventDayId">view</a></td>
+                        <td>
+                            <a href="/admin/events/editagenda/@Model.EventId/@d.EventDayId">view</a>                            
+                        </td>
+                        <td>
+                            @if (!d.TimeSlots.Any())
+                            {
+                                <span class="badge bg-warning">No Timeslots</span>
+                            }
+                            else
+                            {   
+                                @d.TimeSlots.Min(x => x.StartTime).ToString("HH:mm:ss")
+                                <text> - </text>
+                                @d.TimeSlots.Max(x => x.EndTime).ToString("HH:mm:ss")
+                            }
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -51,7 +73,7 @@ else
             <button type="button" class="btn btn-danger" @onclick="Delete"><span class="oi oi-trash"></span> Delete</button>
         </div>
         <div class="col text-end">
-            <a class="btn btn-warning" href="/admin/events/edit/@Model.EventId">Edit</a>
+            <a class="btn btn-success" href="/admin/events/edit/@Model.EventId"><span class="oi oi-pencil"></span> &nbsp; Edit Event</a>
         </div>
 
     </div>

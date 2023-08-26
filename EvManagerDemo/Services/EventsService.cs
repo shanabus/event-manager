@@ -19,7 +19,7 @@ namespace EvManagerDemo.Services
 
         public async Task<Event?> GetEventAsync(int id)
         {
-            var result =  await _context.Events.Where(x => x.EventId == id).Include(x => x.EventDays).FirstOrDefaultAsync(x => x.EventId == id);
+            var result =  await _context.Events.Where(x => x.EventId == id).Include(x => x.EventDays).ThenInclude(x => x.TimeSlots).FirstOrDefaultAsync(x => x.EventId == id);
 
             return result;
         }
@@ -47,6 +47,15 @@ namespace EvManagerDemo.Services
             await _context.SaveChangesAsync();
 
             return e;
+        }
+
+        public async Task<EventDay> UpdateEventDayAsync(EventDay day)
+        {
+            _context.EventDays.Update(day);
+
+            await _context.SaveChangesAsync();
+
+            return day;
         }
     }
 }
