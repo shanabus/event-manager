@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Metadata;
 
 namespace EvManagerDemo.Data
 {
@@ -21,6 +20,12 @@ namespace EvManagerDemo.Data
         public virtual DbSet<EventDay> EventDays { get; set; }
 
         public virtual DbSet<TimeSlot> TimeSlots { get; set; }
+
+        public virtual DbSet<EventRegistration> EventRegistrations { get; set; }
+
+        public virtual DbSet<Presenter> Presenters { get; set; }
+
+        public virtual DbSet<Treatment> Treatments { get; set; }
 
         #region Required
         //protected override void OnModelCreating(ModelBuilder modelBuilder)

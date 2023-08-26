@@ -20,4 +20,22 @@ namespace EvManagerDemo.Data
                 .HasMany(x => x.TimeSlots);
         }
     }
+
+    public class EventRegistrationConfiguration : IEntityTypeConfiguration<EventRegistration>
+    {
+        public void Configure(EntityTypeBuilder<EventRegistration> builder)
+        {
+            builder
+                .HasOne(x => x.Event);
+        }
+    }
+
+    public class TreatmentConfiguration : IEntityTypeConfiguration<Treatment>
+    {
+        public void Configure(EntityTypeBuilder<Treatment> builder)
+        {
+            builder
+                .Property(x => x.Cost).HasPrecision(2);
+        }
+    }
 }

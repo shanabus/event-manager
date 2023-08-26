@@ -1,9 +1,13 @@
-﻿namespace EvManagerDemo.Data
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace EvManagerDemo.Data
 {
+    [EntityTypeConfiguration(typeof(EventRegistrationConfiguration))]
     public class EventRegistration
     {
         public EventRegistration()
         {
+            Treatments = new List<Treatment>();
             Presenters = new List<Presenter>();
         }
 
@@ -19,7 +23,7 @@
 
         public string? Website { get; set; }
 
-        public string PatientGender { get; set; }
+        public string? PatientGender { get; set; }
 
         public bool InHouseDetox { get; set; }
         
@@ -33,9 +37,9 @@
         
         public bool FinancialAid { get; set; }
 
-        public string Membership { get; set; }
+        public string? Membership { get; set; }
         
-        public string Accredidation { get; set; }
+        public string? Accredidation { get; set; }
 
         public string? ClientAgeRange { get; set; }
 
